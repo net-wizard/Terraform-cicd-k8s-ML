@@ -1,4 +1,4 @@
-# Terraform-cidd-k8s-ML
+# Terraform-cicd-k8s-ML
 
 ## PERSONALISED CUSTOMER EXPERIENCE PLATFORM FOR RETAIL
 
