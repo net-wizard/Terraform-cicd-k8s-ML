@@ -1,13 +1,32 @@
 # Terraform-cicd-k8s-ML
+**End-to-end MLOps/DevOps Retail Personalization Platform**
 
-## PERSONALISED CUSTOMER EXPERIENCE PLATFORM FOR RETAIL
+## Technology Stack
+- **Cloud:** AWS
+- **IaC:** Terraform
+- **Orchestration:** Kubernetes (EKS)
+- **CI/CD:** Jenkins + ArgoCD
+- **Monitoring:** Prometheus + Grafana
+- **Logging:** EFK Stack (Elasticsearch, Fluentd, Kibana) + Jaeger
+- **MLOps:** MLflow + Feast
+- **Streaming:** Apache Kafka
 
-Project Aim: Create a platform to provide personalized shopping experience using customer data and machine learning insights.
+## Architecture Components
+1. **Infrastructure Layer**: Terraform, AWS, EKS
+2. **Application Layer**: Microservices (Go/Python/Node.js)
+3. **ML Layer**: Training pipelines, model serving
+4. **CI/CD Layer**: Jenkins pipelines, GitOps
+5. **Observability Layer**: 
+   - Metrics: Prometheus
+   - Logging: EFK Stack
+   - Tracing: Jaeger
+   - Dashboards: Grafana
 
-Description: Develop a microservices-based solution to analyze  customer behaviour and preferences, integrate ML models to deliver personalized product recommendation and promotions.
-Objective:
-1.Design and implement microservices for customer data analysis and recommendation engines.
-Integrate ML models for personalized product recommendations
-Create CI/CD pipeline for seamless integration and deployment.
-Ensure secure handling of customer data and compliance with privacy regulations.
-Monitor system performance and customer engagement metrics.
+## Project Phases
+✅ Phase 0: Foundation (Current)  
+⬜ Phase 1: Containerization  
+⬜ Phase 2: CI/CD Foundation  
+⬜ Phase 3: ML Integration  
+⬜ Phase 4: Advanced DevOps & Logging  
+⬜ Phase 5: Production Features  
+⬜ Phase 6: Polish & Documentation
