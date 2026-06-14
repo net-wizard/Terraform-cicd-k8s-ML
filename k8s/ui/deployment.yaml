@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ui
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ui-service
+  template:
+    metadata:
+      labels:
+        app: ui-service
+    spec:
+      containers:
+        - name: ui-cotainer
+          image: thoratshubham/ui:v1
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 5003
+          envFrom:
+            - configMapRef:
+                name: app-config
