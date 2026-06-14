@@ -241,7 +241,7 @@
       <div class="products-grid">
         {% for product in products %}
         <span class="product-chip">{{ product }}</span>
-        {% empty %}
+        {% else %}
         <p class="placeholder">No products loaded</p>
         {% endfor %}
       </div>

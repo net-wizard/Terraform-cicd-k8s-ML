@@ -1,2 +1,13 @@
 apiVersion: v1
 kind: ConfigMap
+metadata:
+  name: app-config
+data:
+  DB_HOST: "postgres"
+  DB_PORT: "5432"
+  DB_NAME: "retaildb"
+  DB_USER: "devops"
+  MODEL_PATH: "model.pkl"
+  DATA_SERVICE_URL: "http://data-service:5001"
+  MONITOR_SERVICE_URL: "http://monitor-service:5002"
+  ML_API_URL: "http://ml-api:5000"

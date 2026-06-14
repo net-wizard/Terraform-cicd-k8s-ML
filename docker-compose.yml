@@ -4,18 +4,18 @@ services:
     ports:
       - "5000:5000"
     environment:
-      MODEL_PATH: model.pkl
-      DATA_SERVICE_URL: http://data-service:5001
-      MONITOR_SERVICE_URL: http://monitor-service:5002
+      MODEL_PATH: "model.pkl"
+      DATA_SERVICE_URL: "http://data-service:5001"
+      MONITOR_SERVICE_URL: "http://monitor-service:5002"
     depends_on:
       - data-service
       - monitor-service
   postgres:
     image: postgres:15
     environment:
-      POSTGRES_DB: retaildb
-      POSTGRES_USER: devops
-      POSTGRES_PASSWORD: devops123
+      POSTGRES_DB: "retaildb"
+      POSTGRES_USER: "devops"
+      POSTGRES_PASSWORD: "devops123"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
@@ -28,7 +28,11 @@ services:
     ports:
       - "5001:5001"
     environment:
-      DATABASE_URL: postgresql://devops:devops123@postgres:5432/retaildb
+      DB_HOST: "postgres"
+      DB_PORT: "5432"
+      DB_NAME: "retaildb"
+      DB_USER: "devops"
+      DB_PASSWORD: "devops123"
     depends_on:
       postgres:
           condition: service_healthy
@@ -36,6 +40,15 @@ services:
     build: ./services/monitor-service
     ports:
       - "5002:5002"
+  ui-service:
+    build: ./services/ui
+    ports:
+      - "5003:5003"
+    environment:
+      DATA_SERVICE_URL: "http://data-service:5001"
+      ML_API_URL: "http://ml-api:5000"
+    depends_on:
+      - ml-api
 
 volumes:
   postgres_data:
