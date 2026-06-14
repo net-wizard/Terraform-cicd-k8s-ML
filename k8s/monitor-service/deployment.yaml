@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: monitor-service
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: monitor-service
+  template:
+    metadata:
+      labels:
+        app: monitor-service
+    spec:
+      containers:
+        - name: monitor-service
+          image: thoratshubham/monitor-service:v1
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 5002

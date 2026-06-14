@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RetailRec — MLOps Demo</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:      #0d1117;
+      --bg2:     #161b22;
+      --bg3:     #1c2128;
+      --border:  #30363d;
+      --green:   #39d353;
+      --green2:  #238636;
+      --text:    #e6edf3;
+      --muted:   #8b949e;
+      --accent:  #58a6ff;
+    }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', -apple-system, sans-serif;
+      min-height: 100vh;
+    }
+
+    /* NAV */
+    nav {
+      background: var(--bg2);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-logo {
+      font-family: monospace;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--green);
+    }
+    .nav-logo span { color: var(--muted); }
+    .nav-badge {
+      font-size: 0.72rem;
+      background: var(--green2);
+      color: #fff;
+      padding: 2px 10px;
+      border-radius: 20px;
+      font-weight: 600;
+    }
+
+    /* LAYOUT */
+    .container { max-width: 1100px; margin: 0 auto; padding: 32px 24px; }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+    @media (max-width: 768px) { .grid-2 { grid-template-columns: 1fr; } }
+
+    /* CARDS */
+    .card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 24px;
+    }
+    .card-title {
+      font-family: monospace;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--green);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-bottom: 16px;
+    }
+
+    /* FORM */
+    select, button {
+      width: 100%;
+      padding: 10px 14px;
+      border-radius: 7px;
+      font-size: 0.88rem;
+      font-family: inherit;
+      margin-bottom: 12px;
+    }
+    select {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      color: var(--text);
+      outline: none;
+    }
+    select:focus { border-color: var(--green); }
+    button {
+      background: var(--green2);
+      color: #fff;
+      border: none;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    button:hover { background: #2ea043; }
+    button:disabled { background: var(--border); cursor: not-allowed; }
+
+    /* RECOMMENDATIONS */
+    .rec-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+    .rec-rank {
+      font-family: monospace;
+      font-size: 0.75rem;
+      color: var(--muted);
+      width: 20px;
+      flex-shrink: 0;
+    }
+    .rec-name {
+      font-size: 0.88rem;
+      font-weight: 600;
+      width: 140px;
+      flex-shrink: 0;
+    }
+    .bar-wrap {
+      flex: 1;
+      background: var(--bg3);
+      border-radius: 4px;
+      height: 8px;
+      overflow: hidden;
+    }
+    .bar-fill {
+      height: 100%;
+      background: var(--green);
+      border-radius: 4px;
+      transition: width 0.6s ease;
+    }
+    .rec-score {
+      font-family: monospace;
+      font-size: 0.75rem;
+      color: var(--muted);
+      width: 42px;
+      text-align: right;
+      flex-shrink: 0;
+    }
+    .placeholder {
+      color: var(--muted);
+      font-size: 0.85rem;
+      text-align: center;
+      padding: 20px 0;
+    }
+
+    /* PRODUCTS GRID */
+    .products-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .product-chip {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 5px 12px;
+      font-size: 0.78rem;
+      color: var(--text);
+    }
+
+    /* HISTORY TABLE */
+    .history-section { margin-top: 24px; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.83rem;
+    }
+    th {
+      text-align: left;
+      color: var(--muted);
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 8px 12px;
+      border-bottom: 1px solid var(--border);
+    }
+    td {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+      vertical-align: top;
+    }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: var(--bg3); }
+    .badge {
+      display: inline-block;
+      background: rgba(88,166,255,0.12);
+      color: var(--accent);
+      border-radius: 4px;
+      padding: 1px 8px;
+      font-family: monospace;
+      font-size: 0.75rem;
+    }
+    .empty-row td {
+      text-align: center;
+      color: var(--muted);
+      padding: 20px;
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">retail<span>rec</span> ~$</div>
+  <span class="nav-badge">MLOps Demo</span>
+</nav>
+
+<div class="container">
+
+  <!-- TOP GRID -->
+  <div class="grid-2">
+
+    <!-- RECOMMENDATIONS CARD -->
+    <div class="card">
+      <div class="card-title">▸ Get Recommendations</div>
+      <form id="recForm">
+        <select id="userSelect" name="user_id">
+          <option value="">— Select a customer —</option>
+          {% for user in users %}
+          <option value="{{ user }}">{{ user }}</option>
+          {% endfor %}
+        </select>
+        <button type="submit" id="recBtn">Get Recommendations</button>
+      </form>
+      <div id="recResults">
+        <p class="placeholder">Select a customer and click Get Recommendations</p>
+      </div>
+    </div>
+
+    <!-- PRODUCTS CARD -->
+    <div class="card">
+      <div class="card-title">▸ Product Catalogue</div>
+      <div class="products-grid">
+        {% for product in products %}
+        <span class="product-chip">{{ product }}</span>
+        {% empty %}
+        <p class="placeholder">No products loaded</p>
+        {% endfor %}
+      </div>
+    </div>
+
+  </div>
+
+  <!-- HISTORY -->
+  <div class="card history-section">
+    <div class="card-title">▸ Prediction History — last 10</div>
+    <table>
+      <thead>
+        <tr>
+          <th>Customer</th>
+          <th>Top Recommendations</th>
+          <th>Response Time</th>
+          <th>Timestamp</th>
+        </tr>
+      </thead>
+      <tbody id="historyBody">
+        {% if history %}
+          {% for row in history %}
+          <tr>
+            <td><span class="badge">{{ row.user_id }}</span></td>
+            <td>{{ row.recommendations[:3] | join(", ") }}{% if row.recommendations | length > 3 %}…{% endif %}</td>
+            <td style="font-family:monospace; color:var(--green)">{{ row.response_time_s }}s</td>
+            <td style="color:var(--muted); font-size:0.78rem">{{ row.timestamp[:19] }}</td>
+          </tr>
+          {% endfor %}
+        {% else %}
+          <tr class="empty-row"><td colspan="4">No predictions yet — make your first recommendation above</td></tr>
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
+
+</div>
+
+<script>
+  document.getElementById('recForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const userId = document.getElementById('userSelect').value;
+    if (!userId) { alert('Please select a customer'); return; }
+
+    const btn = document.getElementById('recBtn');
+    btn.disabled = true;
+    btn.textContent = 'Loading…';
+    document.getElementById('recResults').innerHTML = '<p class="placeholder">Fetching recommendations…</p>';
+
+    try {
+      const resp = await fetch('/recommend', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: `user_id=${userId}`
+      });
+      const data = await resp.json();
+
+      if (data.error) {
+        document.getElementById('recResults').innerHTML =
+          `<p class="placeholder" style="color:#f85149">${data.error}</p>`;
+        return;
+      }
+
+      const html = data.recommendations.map((r, i) => `
+        <div class="rec-item">
+          <span class="rec-rank">${i + 1}.</span>
+          <span class="rec-name">${r.product}</span>
+          <div class="bar-wrap">
+            <div class="bar-fill" style="width:${Math.min(r.score * 3, 100)}%"></div>
+          </div>
+          <span class="rec-score">${r.score}%</span>
+        </div>
+      `).join('');
+
+      document.getElementById('recResults').innerHTML = html;
+
+      // Refresh history row
+      const histRow = `
+        <tr>
+          <td><span class="badge">${data.user_id}</span></td>
+          <td>${data.recommendations.slice(0,3).map(r=>r.product).join(', ')}…</td>
+          <td style="font-family:monospace;color:var(--green)">${data.response_time_s}s</td>
+          <td style="color:var(--muted);font-size:0.78rem">just now</td>
+        </tr>`;
+      const tbody = document.getElementById('historyBody');
+      const empty = tbody.querySelector('.empty-row');
+      if (empty) empty.remove();
+      tbody.insertAdjacentHTML('afterbegin', histRow);
+
+    } catch(err) {
+      document.getElementById('recResults').innerHTML =
+        `<p class="placeholder" style="color:#f85149">Error: ${err.message}</p>`;
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Get Recommendations';
+    }
+  });
+</script>
+
+</body>
+</html>

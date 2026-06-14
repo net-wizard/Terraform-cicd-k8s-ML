@@ -4,7 +4,6 @@ import os
 
 app = Flask(__name__)
 
-# Prometheus metrics
 REQUEST_COUNT = Counter(
     "ml_api_requests_total",
     "Total number of recommendation requests"
@@ -36,7 +35,6 @@ def record():
 
     REQUEST_COUNT.inc()
     RESPONSE_TIME.observe(response_time)
-
     if status != "success":
         REQUEST_ERRORS.inc()
 

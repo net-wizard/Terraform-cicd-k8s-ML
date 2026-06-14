@@ -3,22 +3,35 @@ import pickle
 import os
 import requests
 import time
+import sys
 
 app = Flask(__name__)
 
-# Load model once when the app starts
-MODEL_PATH = os.getenv("MODEL_PATH", "model.pkl")
-DATA_SERVICE_URL = os.getenv("DATA_SERVICE_URL", "http://data-service:5001")
-MONITOR_SERVICE_URL = os.getenv("MONITOR_SERVICE_URL", "http://monitor-service:5002")
+# ── Required env vars — fail fast if missing ──────────────
+def get_required_env(key):
+    value = os.getenv(key)
+    if not value:
+        print(f"ERROR: {key} environment variable not set", file=sys.stderr)
+        sys.exit(1)
+    return value
 
-with open(MODEL_PATH, "rb") as f:
-    model_data = pickle.load(f)
+MODEL_PATH          = os.getenv("MODEL_PATH", "model.pkl")
+DATA_SERVICE_URL    = get_required_env("DATA_SERVICE_URL")
+MONITOR_SERVICE_URL = get_required_env("MONITOR_SERVICE_URL")
+
+# ── Load model once at startup ────────────────────────────
+try:
+    with open(MODEL_PATH, "rb") as f:
+        model_data = pickle.load(f)
+except FileNotFoundError:
+    print(f"ERROR: model file not found at {MODEL_PATH}", file=sys.stderr)
+    sys.exit(1)
 
 user_item_matrix = model_data["matrix"]
 product_names    = model_data["products"]
 user_ids         = model_data["users"]
 
-
+# ── Routes ────────────────────────────────────────────────
 @app.route("/health", methods=["GET"])
 def health():
     return jsonify({"status": "ok", "service": "ml-api"}), 200
@@ -37,13 +50,22 @@ def recommend():
     if user_id not in user_ids:
         return jsonify({"error": f"user_id '{user_id}' not found"}), 404
 
-    # Get recommendations
-    user_index    = user_ids.index(user_id)
-    user_vector   = user_item_matrix[user_index]
-    top_indices   = sorted(range(len(user_vector)),
-                           key=lambda i: user_vector[i],
-                           reverse=True)[:5]
-    recommendations = [product_names[i] for i in top_indices]
+    user_index  = user_ids.index(user_id)
+    user_vector = user_item_matrix[user_index]
+
+    top_indices = sorted(
+        range(len(user_vector)),
+        key=lambda i: user_vector[i],
+        reverse=True
+    )[:5]
+
+    recommendations = [
+        {
+            "product": product_names[i],
+            "score":   round(float(user_vector[i]) * 100, 1)
+        }
+        for i in top_indices
+    ]
 
     response_time = round(time.time() - start_time, 4)
 
@@ -53,7 +75,7 @@ def recommend():
         "response_time_s": response_time
     }
 
-    # Log to data-service (non-blocking — don't fail if it's down)
+    # Log to data-service — non-blocking
     try:
         requests.post(
             f"{DATA_SERVICE_URL}/log",
@@ -63,7 +85,7 @@ def recommend():
     except Exception:
         pass
 
-    # Update metrics in monitor-service (non-blocking)
+    # Update metrics — non-blocking
     try:
         requests.post(
             f"{MONITOR_SERVICE_URL}/record",
@@ -79,6 +101,11 @@ def recommend():
 @app.route("/products", methods=["GET"])
 def products():
     return jsonify({"products": product_names}), 200
+
+
+@app.route("/users", methods=["GET"])
+def users():
+    return jsonify({"users": user_ids}), 200
 
 
 if __name__ == "__main__":

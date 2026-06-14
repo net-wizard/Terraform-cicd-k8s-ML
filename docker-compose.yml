@@ -1,0 +1,41 @@
+services:
+  ml-api:
+    build: ./services/ml-api
+    ports:
+      - "5000:5000"
+    environment:
+      MODEL_PATH: model.pkl
+      DATA_SERVICE_URL: http://data-service:5001
+      MONITOR_SERVICE_URL: http://monitor-service:5002
+    depends_on:
+      - data-service
+      - monitor-service
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: retaildb
+      POSTGRES_USER: devops
+      POSTGRES_PASSWORD: devops123
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U devops -d retaildb"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+  data-service:
+    build: ./services/data-service
+    ports:
+      - "5001:5001"
+    environment:
+      DATABASE_URL: postgresql://devops:devops123@postgres:5432/retaildb
+    depends_on:
+      postgres:
+          condition: service_healthy
+  monitor-service:
+    build: ./services/monitor-service
+    ports:
+      - "5002:5002"
+
+volumes:
+  postgres_data:
