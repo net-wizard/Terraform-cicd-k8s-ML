@@ -4,16 +4,12 @@ pipeline {
     environment {
         DOCKERHUB_USER = "thoratshubham"
         IMAGE_TAG      = "v${BUILD_NUMBER}"
-        // BUILD_NUMBER is a Jenkins built-in variable
-        // automatically increments each build: v1, v2, v3...
     }
 
     stages {
 
         stage('Checkout') {
             steps {
-                // Jenkins checks out the repo automatically
-                // when using a Pipeline job connected to GitHub
                 checkout scm
             }
         }
