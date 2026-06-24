@@ -58,6 +58,7 @@ pipeline {
                     sh '''
                         git config user.email "shubhamthorat2202@gmail.com"
                         git config user.name "Jenkins CI"
+                        git pull https://$GIT_USER:$GIT_PASS@github.com/net-wizard/Terraform-cicd-k8s-ML.git master
 
                         sed -i "s|image: thoratshubham/ml-api:.*|image: thoratshubham/ml-api:$IMAGE_TAG|g" \
                             k8s/ml-api/deployment.yaml
