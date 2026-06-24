@@ -1,0 +1,238 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  creationTimestamp: "2026-06-24T06:43:11Z"
+  generation: 114
+  name: retailrec
+  namespace: argocd
+  resourceVersion: "214770"
+  uid: e6e6b7d8-6c3d-4c81-97b0-6305d482c14e
+spec:
+  destination:
+    namespace: default
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    directory:
+      recurse: true
+    path: k8s
+    repoURL: https://github.com/net-wizard/Terraform-cicd-k8s-ML.git
+    targetRevision: HEAD
+  syncPolicy:
+    automated:
+      enabled: true
+      prune: true
+      selfHeal: true
+status:
+  controllerNamespace: argocd
+  health:
+    lastTransitionTime: "2026-06-24T09:09:32Z"
+    status: Healthy
+  history:
+  - deployStartedAt: "2026-06-24T07:35:40Z"
+    deployedAt: "2026-06-24T07:35:41Z"
+    id: 0
+    initiatedBy:
+      username: admin
+    revision: a2a90e60efeffded5bd9e7e79c0290846470ed8d
+    source:
+      path: k8s
+      repoURL: https://github.com/net-wizard/Terraform-cicd-k8s-ML.git
+      targetRevision: HEAD
+  - deployStartedAt: "2026-06-24T09:08:55Z"
+    deployedAt: "2026-06-24T09:08:55Z"
+    id: 1
+    initiatedBy:
+      automated: true
+    revision: c2b9d637a3f4c29a92c2d4b0f4ad439f5a8f36d3
+    source:
+      directory:
+        recurse: true
+      path: k8s
+      repoURL: https://github.com/net-wizard/Terraform-cicd-k8s-ML.git
+      targetRevision: HEAD
+  operationState:
+    finishedAt: "2026-06-24T09:08:55Z"
+    message: successfully synced (all tasks run)
+    operation:
+      initiatedBy:
+        automated: true
+      retry:
+        limit: 5
+      sync:
+        autoHealAttemptsCount: 1
+        prune: true
+        resources:
+        - group: apps
+          kind: Deployment
+          name: data-service
+        - group: apps
+          kind: Deployment
+          name: ml-api
+        - group: apps
+          kind: Deployment
+          name: monitor-service
+        - group: apps
+          kind: StatefulSet
+          name: postgres
+        - group: apps
+          kind: Deployment
+          name: ui
+        revision: c2b9d637a3f4c29a92c2d4b0f4ad439f5a8f36d3
+        source:
+          directory:
+            recurse: true
+          path: k8s
+          repoURL: https://github.com/net-wizard/Terraform-cicd-k8s-ML.git
+          targetRevision: HEAD
+    phase: Succeeded
+    startedAt: "2026-06-24T09:08:55Z"
+    syncResult:
+      resources:
+      - group: apps
+        hookPhase: Running
+        images:
+        - thoratshubham/data-service:v7
+        kind: Deployment
+        message: deployment.apps/data-service unchanged
+        name: data-service
+        namespace: default
+        status: Synced
+        syncPhase: Sync
+        version: v1
+      - group: apps
+        hookPhase: Running
+        images:
+        - thoratshubham/ml-api:v7
+        kind: Deployment
+        message: deployment.apps/ml-api unchanged
+        name: ml-api
+        namespace: default
+        status: Synced
+        syncPhase: Sync
+        version: v1
+      - group: apps
+        hookPhase: Running
+        images:
+        - thoratshubham/ui:v7
+        kind: Deployment
+        message: deployment.apps/ui unchanged
+        name: ui
+        namespace: default
+        status: Synced
+        syncPhase: Sync
+        version: v1
+      - group: apps
+        hookPhase: Running
+        images:
+        - thoratshubham/monitor-service:v7
+        kind: Deployment
+        message: deployment.apps/monitor-service unchanged
+        name: monitor-service
+        namespace: default
+        status: Synced
+        syncPhase: Sync
+        version: v1
+      - group: apps
+        hookPhase: Running
+        images:
+        - postgres:15
+        kind: StatefulSet
+        message: statefulset.apps/postgres configured
+        name: postgres
+        namespace: default
+        status: Synced
+        syncPhase: Sync
+        version: v1
+      revision: c2b9d637a3f4c29a92c2d4b0f4ad439f5a8f36d3
+      source:
+        directory:
+          recurse: true
+        path: k8s
+        repoURL: https://github.com/net-wizard/Terraform-cicd-k8s-ML.git
+        targetRevision: HEAD
+  reconciledAt: "2026-06-24T10:58:50Z"
+  resourceHealthSource: appTree
+  resources:
+  - kind: ConfigMap
+    name: app-config
+    namespace: default
+    status: Synced
+    version: v1
+  - kind: Service
+    name: data-service
+    namespace: default
+    status: Synced
+    version: v1
+  - kind: Service
+    name: ml-api
+    namespace: default
+    status: Synced
+    version: v1
+  - kind: Service
+    name: monitor-service
+    namespace: default
+    status: Synced
+    version: v1
+  - kind: Service
+    name: postgres
+    namespace: default
+    status: Synced
+    version: v1
+  - kind: Service
+    name: ui
+    namespace: default
+    status: Synced
+    version: v1
+  - group: apps
+    kind: Deployment
+    name: data-service
+    namespace: default
+    status: Synced
+    version: v1
+  - group: apps
+    kind: Deployment
+    name: ml-api
+    namespace: default
+    status: Synced
+    version: v1
+  - group: apps
+    kind: Deployment
+    name: monitor-service
+    namespace: default
+    status: Synced
+    version: v1
+  - group: apps
+    kind: Deployment
+    name: ui
+    namespace: default
+    status: Synced
+    version: v1
+  - group: apps
+    kind: StatefulSet
+    name: postgres
+    namespace: default
+    status: Synced
+    version: v1
+  sourceHydrator: {}
+  sourceType: Directory
+  summary:
+    images:
+    - postgres:15
+    - thoratshubham/data-service:v7
+    - thoratshubham/ml-api:v7
+    - thoratshubham/monitor-service:v7
+    - thoratshubham/ui:v7
+  sync:
+    comparedTo:
+      destination:
+        namespace: default
+        server: https://kubernetes.default.svc
+      source:
+        directory:
+          recurse: true
+        path: k8s
+        repoURL: https://github.com/net-wizard/Terraform-cicd-k8s-ML.git
+        targetRevision: HEAD
+    revision: c2b9d637a3f4c29a92c2d4b0f4ad439f5a8f36d3
+    status: Synced
