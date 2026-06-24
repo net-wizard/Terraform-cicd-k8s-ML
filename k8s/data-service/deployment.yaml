@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: data-service
-          image: thoratshubham/data-service:v2
+          image: thoratshubham/data-service:v5
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 5001

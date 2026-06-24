@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: ui-cotainer
-          image: thoratshubham/ui:v2
+          image: thoratshubham/ui:v5
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 5003
