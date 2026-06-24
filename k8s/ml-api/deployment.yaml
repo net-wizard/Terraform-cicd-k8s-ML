@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: ml-api
-          image: thoratshubham/ml-api:v6
+          image: thoratshubham/ml-api:v7
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 5000

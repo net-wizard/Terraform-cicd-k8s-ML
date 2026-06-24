@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: monitor-service
-          image: thoratshubham/monitor-service:v6
+          image: thoratshubham/monitor-service:v7
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 5002
