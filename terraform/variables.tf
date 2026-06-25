@@ -43,3 +43,4 @@ variable "common_tags" {
     "ManagedBy"   = "terraform"
   }
 }
+
