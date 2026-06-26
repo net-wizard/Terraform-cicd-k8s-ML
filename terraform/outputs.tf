@@ -13,3 +13,8 @@ output "subnet_b_id" {
   value       = aws_subnet.retailrec_subnet_public_b.id
 
 }
+output "Jenkins_public_ip" {
+    description = "Jenkins Instance public IP Address"
+    value = aws_instance.jenkins_ec2.public_ip
+  
+}
