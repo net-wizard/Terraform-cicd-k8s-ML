@@ -12,6 +12,6 @@ services/ml-api/model.pkl
 
 # Docker
 .dockerignore
-.terraform/
+terraform/.terraform/
 *.tfstate
 *.tfstate.backup

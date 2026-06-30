@@ -38,6 +38,7 @@ resource "aws_instance" "jenkins_ec2" {
   subnet_id                   = aws_subnet.retailrec_subnet_public_a.id
   vpc_security_group_ids      = [aws_security_group.retailrec_jenkins_sg.id]
   associate_public_ip_address = true
+  iam_instance_profile        = aws_iam_instance_profile.jenkins_profile.name
   tags                        = merge(var.common_tags, { Name = "jenkins_ec2" })
 
 }
