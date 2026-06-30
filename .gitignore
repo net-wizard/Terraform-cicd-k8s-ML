@@ -15,3 +15,5 @@ services/ml-api/model.pkl
 terraform/.terraform/
 *.tfstate
 *.tfstate.backup
+terraform/tfplan
+*.tfplan
