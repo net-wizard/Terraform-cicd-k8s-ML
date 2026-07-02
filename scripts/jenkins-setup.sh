@@ -1,5 +1,3 @@
-# scripts/jenkins-setup.sh
-
 #!/bin/bash
 set -e   # exit on any error
 set -x   # print each command (for debugging)
