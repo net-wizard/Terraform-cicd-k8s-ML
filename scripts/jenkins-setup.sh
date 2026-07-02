@@ -3,15 +3,20 @@ set -e   # exit on any error
 set -x   # print each command (for debugging)
 export DEBIAN_FRONTEND=noninteractive
 
-# ── SECTION 1: System Setup ────────────────────────
-# update, upgrade, install basics
-sudo apt update
-sudo apt upgrade -y
+
+# ── SECTION 1: Variable Setup ────────────────────────
+#Variables
+sudo apt update -y
+sudo apt install unzip -y
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+unzip awscliv2.zip
+sudo ./aws/install
+UBUNTU_CODENAME_VAL=$$(. /etc/os-release && echo "$${UBUNTU_CODENAME:-$$VERSION_CODENAME}")
+ARCH_VAL=$$(dpkg --print-architecture)
 
 # ── SECTION 2: Docker ──────────────────────────────
 # install, start, enable, add ubuntu to docker group
-UBUNTU_CODENAME_VAL=$$(. /etc/os-release && echo "$${UBUNTU_CODENAME:-$$VERSION_CODENAME}")
-ARCH_VAL=$$(dpkg --print-architecture)
+sudo apt update -y 
 sudo apt install ca-certificates curl -y
 sudo install -m 0755 -d /etc/apt/keyrings
 sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
@@ -25,6 +30,7 @@ Architectures: $$ARCH_VAL
 Signed-By: /etc/apt/keyrings/docker.asc
 EOF
 sudo apt update
+sudo apt upgrade -y
 sudo apt install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
 sudo systemctl restart docker
 sudo systemctl enable docker
@@ -68,7 +74,7 @@ done
 # ── SECTION 6: Jenkins Configuration as Code ───────
 # install JCasC plugin, fetch config from S3
 sleep 30s # Even after jenkins is start responding from port 8080, Jenkins still need to initialise internal plugins and be ready to docker excec command and setup CASC config loacation
-git clone https://github.com/net-wizard/Terraform-cicd-k8s-ML.git /opt/retailrec
+sudo git clone https://github.com/net-wizard/Terraform-cicd-k8s-ML.git /opt/retailrec
 cd /opt/retailrec
 docker exec jenkins mkdir -p /var/jenkins_home/casc_configs
 docker cp /opt/retailrec/jenkins/jenkins.yaml jenkins:/var/jenkins_home/casc_configs/jenkins.yaml

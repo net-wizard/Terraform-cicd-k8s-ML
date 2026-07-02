@@ -39,11 +39,23 @@ resource "aws_instance" "jenkins_ec2" {
   vpc_security_group_ids      = [aws_security_group.retailrec_jenkins_sg.id]
   associate_public_ip_address = true
   iam_instance_profile        = aws_iam_instance_profile.jenkins_profile.name
-  user_data = templatefile("${path.module}/../scripts/jenkins-setup.sh",{
-    ecr_jenkins_url= aws_ecr_repository.retailrec_jenkins.repository_url
-    region = var.region
+  user_data = templatefile("${path.module}/../scripts/jenkins-setup.sh", {
+    ecr_jenkins_url = aws_ecr_repository.retailrec_jenkins.repository_url
+    region          = var.region
   })
-  tags                        = merge(var.common_tags, { Name = "jenkins_ec2" })
-  depends_on = [ null_resource.push_jenkins_image ]
+  tags       = merge(var.common_tags, { Name = "jenkins_ec2" })
+  depends_on = [null_resource.push_jenkins_image]
+  lifecycle {
+    replace_triggered_by = [
+      terraform_data.jenkins_user_data
+    ]
+  }
 
+}
+
+resource "terraform_data" "jenkins_user_data" {
+  input = templatefile("${path.module}/../scripts/jenkins-setup.sh", {
+    ecr_jenkins_url = aws_ecr_repository.retailrec_jenkins.repository_url
+    region          = var.region
+  })
 }

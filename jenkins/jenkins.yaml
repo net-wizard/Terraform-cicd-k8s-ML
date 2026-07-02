@@ -1,5 +1,6 @@
 jenkins:
   systemMessage: "Initializing Jenkins..."
+  installState: INITIAL_SETUP_COMPLETED
   securityRealm:
     local:
       allowsSignup: false
