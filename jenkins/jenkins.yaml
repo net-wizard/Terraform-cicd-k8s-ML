@@ -1,0 +1,42 @@
+jenkins:
+  systemMessage: "Initializing Jenkins..."
+  securityRealm:
+    local:
+      allowsSignup: false
+      users:
+        - id: "admin"
+          password: "admin"
+
+  authorizationStrategy:
+    loggedInUsersCanDoAnything:
+      allowAnonymousRead: false
+
+credentials:
+  system:
+    domainCredentials:
+      - credentials:
+          - usernamePassword:
+              id: "github-credentials"
+              username: "net-wizard"
+              password: "${GITHUB_TOKEN}"
+              scope: GLOBAL
+
+jobs:
+  - script: >
+      pipelineJob('retailrec-pipeline') {
+      description('RetailRec MLOps CI/CD Pipeline')
+        definition {
+          cpsScm {
+            scm {
+              git {
+                remote {
+                  url('https://github.com/net-wizard/Terraform-cicd-k8s-ML.git')
+                  credentials('github-credentials')
+                }
+                branch('*/master')
+              }
+            }
+            scriptPath('Jenkinsfile')
+          }
+        }
+      }

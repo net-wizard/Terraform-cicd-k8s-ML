@@ -17,4 +17,8 @@ RUN apt-get update && apt-get upgrade -y && \
     install -m  0755 kubectl /usr/local/bin && \
     rm kubectl
 
+COPY plugins.txt /usr/share/jenkins/plugins.txt
+
 USER jenkins
+
+RUN jenkins-plugin-cli --plugin-file /usr/share/jenkins/plugins.txt
