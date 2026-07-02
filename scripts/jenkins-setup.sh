@@ -10,6 +10,8 @@ sudo apt upgrade -y
 
 # ── SECTION 2: Docker ──────────────────────────────
 # install, start, enable, add ubuntu to docker group
+UBUNTU_CODENAME_VAL=$$(. /etc/os-release && echo "$${UBUNTU_CODENAME:-$$VERSION_CODENAME}")
+ARCH_VAL=$$(dpkg --print-architecture)
 sudo apt install ca-certificates curl -y
 sudo install -m 0755 -d /etc/apt/keyrings
 sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
@@ -17,9 +19,9 @@ sudo chmod a+r /etc/apt/keyrings/docker.asc
 sudo tee /etc/apt/sources.list.d/docker.sources <<EOF
 Types: deb
 URIs: https://download.docker.com/linux/ubuntu
-Suites: $$(. /etc/os-release && echo "$${UBUNTU_CODENAME:-$$VERSION_CODENAME}")
+Suites: $$UBUNTU_CODENAME_VAL
 Components: stable
-Architectures: $$(dpkg --print-architecture)
+Architectures: $$ARCH_VAL
 Signed-By: /etc/apt/keyrings/docker.asc
 EOF
 sudo apt update
